@@ -81,6 +81,12 @@
 
       content.appendChild(title);
       content.appendChild(para);
+      if(page == 'contact')
+      {
+         const contact =  document.createElement('h2');
+     contact.textContent = "This contact Page"
+        content.appendChild(contact)
+      }
     }
 
     document.getElementById('homeBtn').addEventListener('click', () => renderContent('home'));
