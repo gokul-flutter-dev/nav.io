@@ -2,31 +2,38 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  <title>WebF Offline Navigation Example</title>
+  <title>WebF Mobile Navigation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
       font-family: sans-serif;
       margin: 0;
       display: flex;
+      flex-direction: column;
     }
 
     nav {
-      width: 200px;
       background: #2c3e50;
       color: white;
-      height: 100vh;
-      padding: 1rem;
-      box-sizing: border-box;
+      width: 100%;
     }
 
     nav ul {
-      list-style: none;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
       padding: 0;
+      margin: 0;
+      list-style: none;
+      overflow-x: auto;
     }
 
     nav li {
-      padding: 10px;
+      padding: 12px;
       cursor: pointer;
+      flex: 1;
+      text-align: center;
+      white-space: nowrap;
     }
 
     nav li:hover {
@@ -34,38 +41,58 @@
     }
 
     main {
-      flex: 1;
-      padding: 2rem;
+      padding: 1rem;
     }
 
     .loading {
       color: gray;
     }
+
+    /* Larger screen layout */
+    @media (min-width: 768px) {
+      body {
+        flex-direction: row;
+      }
+
+      nav {
+        width: 200px;
+        height: 100vh;
+      }
+
+      nav ul {
+        flex-direction: column;
+      }
+
+      main {
+        flex: 1;
+        padding: 2rem;
+      }
+    }
   </style>
 </head>
 <body>
   <nav>
-    <ul>
-      <li onclick="loadContent('home')">Home</li>
-      <li onclick="loadContent('about')">About</li>
-      <li onclick="loadContent('contact')">Contact</li>
+    <ul id="menu">
+      <li data-page="home">Home</li>
+      <li data-page="about">About</li>
+      <li data-page="contact">Contact</li>
     </ul>
   </nav>
+
   <main id="content">
     <h2>Welcome</h2>
     <p>Select a menu to load content.</p>
   </main>
 
   <script>
-    // Mock API data
     const mockAPI = {
       home: {
         title: "Home Page",
-        body: "Welcome to the home page! This is loaded via JS only."
+        body: "Welcome to the mobile-ready home page!"
       },
       about: {
         title: "About Us",
-        body: "We are building embedded mini-apps with WebF!"
+        body: "We are building offline apps using WebF!"
       },
       contact: {
         title: "Contact",
@@ -73,23 +100,30 @@
       }
     };
 
-    async function loadContent(page) {
+    function loadContent(page) {
       const contentDiv = document.getElementById('content');
       contentDiv.innerHTML = '<p class="loading">Loading...</p>';
 
-      // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      const data = mockAPI[page];
-      if (data) {
-        contentDiv.innerHTML = `
-          <h2>${data.title}</h2>
-          <p>${data.body}</p>
-        `;
-      } else {
-        contentDiv.innerHTML = `<p style="color:red;">Page "${page}" not found.</p>`;
-      }
+      setTimeout(() => {
+        const data = mockAPI[page];
+        if (data) {
+          contentDiv.innerHTML = `
+            <h2>${data.title}</h2>
+            <p>${data.body}</p>
+          `;
+        } else {
+          contentDiv.innerHTML = `<p style="color:red;">Page "${page}" not found.</p>`;
+        }
+      }, 400);
     }
+
+    const menuItems = document.querySelectorAll('#menu li');
+    menuItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const page = item.getAttribute('data-page');
+        loadContent(page);
+      });
+    });
   </script>
 </body>
 </html>
